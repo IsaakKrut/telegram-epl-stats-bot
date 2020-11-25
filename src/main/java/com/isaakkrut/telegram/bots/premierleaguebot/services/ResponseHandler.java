@@ -56,7 +56,8 @@ public class ResponseHandler {
                 case BotConfig.TOP_ASSISTS:
                     replyToTopAssists(chatId);
                     break;
-                    
+                default:
+                    setFavouriteTeam(chatId, data);
             }
     }
 
