@@ -1,9 +1,12 @@
 package com.isaakkrut.telegram.bots.premierleaguebot.services.rest;
 
+import com.isaakkrut.telegram.bots.premierleaguebot.domain.Assist;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Scorer;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Team;
+import com.isaakkrut.telegram.bots.premierleaguebot.mappers.AssistMapper;
 import com.isaakkrut.telegram.bots.premierleaguebot.mappers.ScorerMapper;
 import com.isaakkrut.telegram.bots.premierleaguebot.mappers.TeamMapper;
+import com.isaakkrut.telegram.bots.premierleaguebot.model.AssistListDto;
 import com.isaakkrut.telegram.bots.premierleaguebot.model.ScorerListDto;
 import com.isaakkrut.telegram.bots.premierleaguebot.model.TeamListDto;
 import lombok.Setter;
@@ -25,6 +28,7 @@ public class RestServiсeWebClient implements RestServiсe {
     private String url;
     private String tableUri;
     private String scorersUri;
+    private String assistsUri;
 
     private WebClient webClient;
 
@@ -77,6 +81,28 @@ public class RestServiсeWebClient implements RestServiсe {
             scorers.add(scorer);
         });
         return Optional.of(scorers);
+    }
+
+    @Override
+    public Optional<List<Assist>> getAssists() {
+        AssistListDto assistSDto = webClient.get()
+                .uri(url + assistsUri)
+                .header("x-rapidapi-key", xRapidapiKey)
+                .header("x-rapidapi-host", xRapidapiHost)
+                .retrieve()
+                .bodyToMono(AssistListDto.class)
+                .block();
+
+        //convert to Team objects and set current position in the table
+        List<Assist> assists = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger(1);
+
+        assistSDto.getTablestat().forEach(dto -> {
+            Assist assist = AssistMapper.assistDtoToAssist(dto);
+            assist.setPlace(count.getAndIncrement());
+            assists.add(assist);
+        });
+        return Optional.of(assists);
     }
 
 }
