@@ -2,6 +2,7 @@ package com.isaakkrut.telegram.bots.premierleaguebot.config;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.bot.PremierLeagueBot;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.assist.AssistService;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.scorer.ScorerService;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.team.TeamService;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,8 @@ public class BotConfig {
     private int creatorId;
 
     @Bean
-    public PremierLeagueBot getBot(TeamService teamService, ScorerService scorerService, DataLoader dataLoader){
-        return new PremierLeagueBot(botToken, botUsername, creatorId, teamService, scorerService, dataLoader);
+    public PremierLeagueBot getBot(DataLoader dataLoader, TeamService teamService, ScorerService scorerService, AssistService assistService){
+        return new PremierLeagueBot(botToken, botUsername, creatorId, dataLoader, teamService, scorerService, assistService);
     }
 
     //messages
@@ -37,6 +38,11 @@ public class BotConfig {
     public static final String MENU_SET_TEAM = "Set Favourite Team";
     public static final String MENU_TEAM = "Team";
     public static final String MENU_REMOVE_TEAM = "Remove Team";
+
+    public static final String CREATOR_MENU_RELOAD_ALL = "Reload All";
+    public static final String CREATOR_MENU_RELOAD_TABLE = "Reload Table";
+    public static final String CREATOR_MENU_RELOAD_SCORERS = "Reload Scorers";
+    public static final String CREATOR_MENU_RELOAD_ASSISTS = "Reload Assists";
 
     //command descriptions
     public static final String START_COMMAND_DESCRIPTION = "Menu Options";

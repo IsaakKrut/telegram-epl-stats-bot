@@ -1,6 +1,7 @@
 package com.isaakkrut.telegram.bots.premierleaguebot.services;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.UpdateLog;
+import com.isaakkrut.telegram.bots.premierleaguebot.repositories.AssistRepository;
 import com.isaakkrut.telegram.bots.premierleaguebot.repositories.ScorerRepository;
 import com.isaakkrut.telegram.bots.premierleaguebot.repositories.TeamRepository;
 import com.isaakkrut.telegram.bots.premierleaguebot.repositories.UpdateLogRepository;
@@ -18,6 +19,7 @@ public class DataLoaderImpl implements DataLoader {
     private final RestServiсe restServiсe;
     private final TeamRepository teamRepository;
     private final ScorerRepository scorerRepository;
+    private final AssistRepository assistRepository;
     private final UpdateLogRepository updateLogRepository;
     private static final int  UPDATES_LIMIT = 50;
 
@@ -25,7 +27,16 @@ public class DataLoaderImpl implements DataLoader {
     //returns number of updates left this month
     //50 per month is a limit set by REST API
     @Override
-    public int loadData(Long chatId) {
+    public int loadAll(Long chatId) {
+        loadTable(chatId);
+        loadScorers(chatId);
+        loadAssists(chatId);
+
+        return DataLoaderImpl.UPDATES_LIMIT - (int) updateLogRepository.count();
+    }
+
+    @Override
+    public int loadTable(Long chatId) {
         updateLogRepository.save(UpdateLog.builder()
                 .userIssuedUpdate(chatId)
                 .updateTime(new Date())
@@ -40,15 +51,46 @@ public class DataLoaderImpl implements DataLoader {
                     ()->log.debug("No teams returned from the rest service"));
         }
 
+        log.debug("Number of teams: " + teamRepository.count());
+
+        return DataLoaderImpl.UPDATES_LIMIT - (int) updateLogRepository.count();
+    }
+
+    @Override
+    public int loadScorers(Long chatId) {
+        updateLogRepository.save(UpdateLog.builder()
+                .userIssuedUpdate(chatId)
+                .updateTime(new Date())
+                .build());
+        System.out.println(updateLogRepository.count() + " - number of updates this month");
+
         scorerRepository.deleteAll();
         if (scorerRepository.count() == 0){
             restServiсe.getScorers().ifPresentOrElse(scorers -> {
                 scorers.forEach(scorerRepository::save);
             }, ()->log.debug("No scorers returned from the rest service"));
         }
-        log.debug("Number of teams: " + teamRepository.count());
+
         log.debug("Number of scorers: " + scorerRepository.count());
         return DataLoaderImpl.UPDATES_LIMIT - (int) updateLogRepository.count();
+    }
 
+    @Override
+    public int loadAssists(Long chatId) {
+        updateLogRepository.save(UpdateLog.builder()
+                .userIssuedUpdate(chatId)
+                .updateTime(new Date())
+                .build());
+        System.out.println(updateLogRepository.count() + " - number of updates this month");
+
+        assistRepository.deleteAll();
+        if (assistRepository.count()==0){
+            restServiсe.getAssists().ifPresentOrElse(assists -> {
+                assists.forEach(assistRepository::save);
+            }, ()->log.debug("No assists returned from the rest service"));
+        }
+
+        log.debug("Number of assists: " + assistRepository.count());
+        return DataLoaderImpl.UPDATES_LIMIT - (int) updateLogRepository.count();
     }
 }

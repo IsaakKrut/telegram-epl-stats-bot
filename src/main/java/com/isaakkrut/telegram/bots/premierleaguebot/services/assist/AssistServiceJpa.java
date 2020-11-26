@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class AssistServiceJpa implements AssistService {
 
-    AssistRepository assistRepository;
+    private final AssistRepository assistRepository;
     @Override
     public List<Assist> getAllAssists() {
         List<Assist> assists = new ArrayList<>();

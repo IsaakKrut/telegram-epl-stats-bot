@@ -2,6 +2,7 @@ package com.isaakkrut.telegram.bots.premierleaguebot.bot;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.config.BotConfig;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.assist.AssistService;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.scorer.ScorerService;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.team.TeamService;
 import org.telegram.abilitybots.api.bot.AbilityBot;
@@ -21,10 +22,11 @@ public class PremierLeagueBot extends AbilityBot {
     private int creatorId;
     private final ResponseHandler responseHandler;
 
-    public PremierLeagueBot(String botToken, String botUsername, int creatorId, TeamService teamService, ScorerService scorerService, DataLoader dataLoader) {
+    public PremierLeagueBot(String botToken, String botUsername, int creatorId, DataLoader dataLoader
+            , TeamService teamService, ScorerService scorerService, AssistService assistService) {
         super(botToken, botUsername);
         this.creatorId = creatorId;
-        responseHandler = new ResponseHandler(sender, db, teamService, scorerService, dataLoader);
+        responseHandler = new ResponseHandler(sender, db, dataLoader, teamService, scorerService, assistService);
     }
 
     @Override
@@ -67,7 +69,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .info("Reload data from rapidapi")
                 .locality(USER)
                 .privacy(CREATOR)
-                .action(ctx ->  responseHandler.replyToLoadData(ctx.chatId()))
+                .action(ctx ->  responseHandler.replyToLoadData(ctx.chatId(), this.creatorId))
                 .build();
     }
 

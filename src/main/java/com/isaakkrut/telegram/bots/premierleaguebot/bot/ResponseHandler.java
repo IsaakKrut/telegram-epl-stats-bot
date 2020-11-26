@@ -2,9 +2,11 @@ package com.isaakkrut.telegram.bots.premierleaguebot.bot;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.config.BotConfig;
 import com.isaakkrut.telegram.bots.premierleaguebot.config.KeyboardFactory;
+import com.isaakkrut.telegram.bots.premierleaguebot.domain.Assist;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Scorer;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Team;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.assist.AssistService;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.scorer.ScorerService;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.team.TeamService;
 import lombok.Setter;
@@ -26,15 +28,19 @@ public class ResponseHandler {
 
     private final TeamService teamService;
     private final ScorerService scorerService;
+    private final AssistService assistService;
 
     private final DataLoader dataLoader;
 
-    public ResponseHandler(MessageSender sender, DBContext db, TeamService teamService, ScorerService scorerService, DataLoader dataLoader) {
+    public ResponseHandler(MessageSender sender, DBContext db, DataLoader dataLoader
+            , TeamService teamService, ScorerService scorerService, AssistService assistService) {
         this.sender = sender;
         favouriteTeams = db.getMap(BotConfig.DB_FAVOURITE_TEAMS);
+        this.dataLoader = dataLoader;
         this.teamService = teamService;
         this.scorerService = scorerService;
-        this.dataLoader = dataLoader;
+        this.assistService = assistService;
+
     }
 
     public void replyToStart(Long chatId) {
@@ -83,13 +89,19 @@ public class ResponseHandler {
                     break;
                 default:
                     setFavouriteTeam(chatId, data);
+                    replyToTeam(chatId);
             }
     }
 
     public void replyToTopAssists(Long chatId)  {
+        StringBuilder message = new StringBuilder("Premier League Top Assists - 2020/2021\n\n");
+        log.debug("Number of assists: " + assistService.getAllAssists().size());
+        assistService.getAllAssists().stream()
+                .sorted(Comparator.comparingInt(Assist::getPlace))               //sort the table
+                .forEach(assist -> message.append(assist.toString() + "\n"));
         try {
             sender.execute(new SendMessage()
-                    .setText("Top Assists: \n1.\n2.\n3.")
+                    .setText(message.toString())
                     .setChatId(chatId));
             sendMenuButtons(chatId);
         } catch (TelegramApiException e){
@@ -100,14 +112,13 @@ public class ResponseHandler {
 
 
     public void replyToTopScorers(Long chatId) {
-        StringBuilder message = new StringBuilder("Premier League table season 2020/2021\n\n");
+        StringBuilder message = new StringBuilder("Premier League Top Scorers - 2020/2021\n\n");
 
-        log.debug("Number of teams: " + teamService.getAllTeams().size());
+        log.debug("Number of scorers: " + scorerService.getAllScorers().size());
         scorerService.getAllScorers().stream()
                 .sorted(Comparator.comparingInt(Scorer::getPlace))               //sort the table
                 .forEach(scorer -> message.append(scorer.toString() + "\n"));
 
-       // message.append("G - goals\nP - penalties");
         try{
             sender.execute(new SendMessage()
                     .setText(message.toString())
@@ -119,7 +130,7 @@ public class ResponseHandler {
     }
 
     public void replyToTable(Long chatId) {
-        StringBuilder message = new StringBuilder("Premier League table season 2020/2021\n\n");
+        StringBuilder message = new StringBuilder("Premier League table - season 2020/2021\n\n");
 
         log.debug("Number of teams: " + teamService.getAllTeams().size());
         teamService.getAllTeams().stream()
@@ -145,7 +156,6 @@ public class ResponseHandler {
 
         if (teamService.getTeamByName(teamName)!= null){
             favouriteTeams.put(chatId, teamName);
-            replyToTeam(chatId);
         }
         else {
             replyToSetTeam(chatId);
@@ -213,13 +223,16 @@ public class ResponseHandler {
     }
 
 
-    public void replyToLoadData(Long chatId) {
-        int numOfUpdatesLeft = dataLoader.loadData(chatId);
+    public void replyToLoadData(Long chatId, int creatorId) {
+        //only creator is allowed to reload data
+        if (chatId!= creatorId){
+            return;
+        }
         try {
             sender.execute(new SendMessage()
-                    .setText("Data has been updated. You have " + numOfUpdatesLeft
-                    + " updates left this month")
-                    .setChatId(chatId));
+                    .setText("What would you like to reload?")
+                    .setChatId(chatId)
+                    .setReplyMarkup(KeyboardFactory.loadDataOptionsList()));
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
