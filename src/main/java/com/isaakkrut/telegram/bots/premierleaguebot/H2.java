@@ -1,3 +1,4 @@
+/*
 package com.isaakkrut.telegram.bots.premierleaguebot;
 
 import org.springframework.context.event.EventListener;
@@ -22,4 +23,4 @@ public class H2 {
         this.webServer.stop();
     }
 
-}
+}*/
