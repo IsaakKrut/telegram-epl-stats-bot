@@ -2,9 +2,9 @@ package com.isaakkrut.telegram.bots.premierleaguebot.bot;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.config.BotConfig;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.assist.AssistService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.scorer.ScorerService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.team.TeamService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.AssistService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.ScorerService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.TeamService;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.abilitybots.api.objects.Flag;

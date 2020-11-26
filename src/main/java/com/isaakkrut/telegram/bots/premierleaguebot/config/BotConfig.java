@@ -2,9 +2,9 @@ package com.isaakkrut.telegram.bots.premierleaguebot.config;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.bot.PremierLeagueBot;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.assist.AssistService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.scorer.ScorerService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.team.TeamService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.AssistService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.ScorerService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.TeamService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

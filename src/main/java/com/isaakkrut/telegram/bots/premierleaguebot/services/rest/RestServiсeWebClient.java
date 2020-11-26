@@ -11,6 +11,7 @@ import com.isaakkrut.telegram.bots.premierleaguebot.model.ScorerListDto;
 import com.isaakkrut.telegram.bots.premierleaguebot.model.TeamListDto;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -25,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Setter
 @ConfigurationProperties(prefix = "rapidapi")
+@Primary
 @Service
 public class RestServiсeWebClient implements RestServiсe {
     private String xRapidapiKey;

@@ -1,4 +1,4 @@
-package com.isaakkrut.telegram.bots.premierleaguebot.services.team;
+package com.isaakkrut.telegram.bots.premierleaguebot.services;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Team;
 
@@ -9,4 +9,8 @@ public interface TeamService {
     List<Team> getAllTeams();
 
     Team getTeamByName(String name);
+    
+    void saveAll(List<Team> teams);
+
+    void deleteAll();
 }

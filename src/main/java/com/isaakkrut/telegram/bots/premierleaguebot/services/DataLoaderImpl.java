@@ -1,9 +1,6 @@
 package com.isaakkrut.telegram.bots.premierleaguebot.services;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.UpdateLog;
-import com.isaakkrut.telegram.bots.premierleaguebot.repositories.AssistRepository;
-import com.isaakkrut.telegram.bots.premierleaguebot.repositories.ScorerRepository;
-import com.isaakkrut.telegram.bots.premierleaguebot.repositories.TeamRepository;
 import com.isaakkrut.telegram.bots.premierleaguebot.repositories.UpdateLogRepository;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.rest.RestServiсe;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +19,9 @@ import java.util.Date;
 @Service
 public class DataLoaderImpl implements DataLoader {
     private final RestServiсe restServiсe;
-    private final TeamRepository teamRepository;
-    private final ScorerRepository scorerRepository;
-    private final AssistRepository assistRepository;
+    private final TeamService teamService;
+    private final ScorerService scorerService;
+    private final AssistService assistService;
     private final UpdateLogRepository updateLogRepository;
     private static final int  UPDATES_LIMIT = 50;
 
@@ -44,15 +41,9 @@ public class DataLoaderImpl implements DataLoader {
                 .build());
         System.out.println(updateLogRepository.count() + " - number of updates this month");
 
-        teamRepository.deleteAll();
-        if (teamRepository.count() == 0){
-            restServiсe.getTeams().ifPresentOrElse(teams -> {
-                        teams.forEach(teamRepository::save);
-                    },
+        teamService.deleteAll();
+            restServiсe.getTeams().ifPresentOrElse(teams-> teamService.saveAll(teams),
                     ()->log.debug("No teams returned from the rest service"));
-        }
-
-        log.debug("Number of teams: " + teamRepository.count());
     }
 
     @Override
@@ -63,14 +54,10 @@ public class DataLoaderImpl implements DataLoader {
                 .build());
         System.out.println(updateLogRepository.count() + " - number of updates this month");
 
-        scorerRepository.deleteAll();
-        if (scorerRepository.count() == 0){
-            restServiсe.getScorers().ifPresentOrElse(scorers -> {
-                scorers.forEach(scorerRepository::save);
-            }, ()->log.debug("No scorers returned from the rest service"));
-        }
+        scorerService.deleteAll();
+            restServiсe.getScorers().ifPresentOrElse(scorers -> scorerService.saveAll(scorers),
+                    ()->log.debug("No scorers returned from the rest service"));
 
-        log.debug("Number of scorers: " + scorerRepository.count());
     }
 
     @Override
@@ -86,13 +73,8 @@ public class DataLoaderImpl implements DataLoader {
                 .build());
         System.out.println(updateLogRepository.count() + " - number of updates this month");
 
-        assistRepository.deleteAll();
-        if (assistRepository.count()==0){
-            restServiсe.getAssists().ifPresentOrElse(assists -> {
-                assists.forEach(assistRepository::save);
-            }, ()->log.debug("No assists returned from the rest service"));
-        }
-
-        log.debug("Number of assists: " + assistRepository.count());
+        assistService.deleteAll();
+        restServiсe.getAssists().ifPresentOrElse(assists ->assistService.saveAll(assists),
+                ()->log.debug("No assists returned from the rest service"));
     }
 }

@@ -6,9 +6,9 @@ import com.isaakkrut.telegram.bots.premierleaguebot.domain.Assist;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Scorer;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Team;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.assist.AssistService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.scorer.ScorerService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.team.TeamService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.AssistService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.ScorerService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.TeamService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.abilitybots.api.db.DBContext;
@@ -18,6 +18,7 @@ import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -122,15 +123,21 @@ public class ResponseHandler {
 
     public void replyToTopAssists(Long chatId)  {
         StringBuilder message = new StringBuilder("Premier League Top Assists - 2020/2021\n\n");
-        log.debug("Number of assists: " + assistService.getAllAssists().size());
-        assistService.getAllAssists().stream()
-                .sorted(Comparator.comparingInt(Assist::getPlace))               //sort the table
-                .forEach(assist -> message.append(assist.toString() + "\n"));
+        List<Assist> assists = assistService.getAllAssists();
+        log.debug("Number of assists: " + assists.size());
         try {
-            sender.execute(new SendMessage()
-                    .setText(message.toString())
-                    .setChatId(chatId)
-                    .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
+            if (assists.size() > 0){
+                assists.stream()
+                        .sorted(Comparator.comparingInt(Assist::getPlace))               //sort the table
+                        .forEach(assist -> message.append(assist.toString() + "\n"));
+
+                sender.execute(new SendMessage()
+                        .setText(message.toString())
+                        .setChatId(chatId)
+                        .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
+            } else {
+                sendEmptyDatabaseWarning(chatId);
+            }
         } catch (TelegramApiException e){
             e.printStackTrace();
         }
@@ -140,17 +147,22 @@ public class ResponseHandler {
 
     public void replyToTopScorers(Long chatId) {
         StringBuilder message = new StringBuilder("Premier League Top Scorers - 2020/2021\n\n");
-
-        log.debug("Number of scorers: " + scorerService.getAllScorers().size());
-        scorerService.getAllScorers().stream()
-                .sorted(Comparator.comparingInt(Scorer::getPlace))               //sort the table
-                .forEach(scorer -> message.append(scorer.toString() + "\n"));
-
+        List<Scorer> scorers = scorerService.getAllScorers();
+        log.debug("Number of scorers: " + scorers.size());
         try{
-            sender.execute(new SendMessage()
-                    .setText(message.toString())
-                    .setChatId(chatId)
-                    .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
+            if (scorers.size() > 0){
+                scorers.stream()
+                        .sorted(Comparator.comparingInt(Scorer::getPlace))               //sort the table
+                        .forEach(scorer -> message.append(scorer.toString() + "\n"));
+
+
+                sender.execute(new SendMessage()
+                        .setText(message.toString())
+                        .setChatId(chatId)
+                        .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
+            } else {
+                sendEmptyDatabaseWarning(chatId);
+            }
         } catch (TelegramApiException e){
         e.printStackTrace();
         }
@@ -159,21 +171,28 @@ public class ResponseHandler {
     public void replyToTable(Long chatId) {
         StringBuilder message = new StringBuilder("Premier League table - season 2020/2021\n\n");
 
-        log.debug("Number of teams: " + teamService.getAllTeams().size());
-        teamService.getAllTeams().stream()
-                .sorted(Comparator.comparingInt(Team::getPlace))               //sort the table
-                .forEach(team -> message.append(team.toString() + "\n"));
+        List<Team> teams = teamService.getAllTeams();
+        log.debug("Number of teams: " + teams.size());
+        try {
+        if (teams.size() > 0) {
+            teamService.getAllTeams().stream()
+                    .sorted(Comparator.comparingInt(Team::getPlace))               //sort the table
+                    .forEach(team -> message.append(team.toString() + "\n"));
 
-        message.append("P - points\nM - matches played\nW - wins\nD - draws\n" +
-                "L - losses\nGS - goals scored\nGC - goals conceded");
+            message.append("P - points\nM - matches played\nW - wins\nD - draws\n" +
+                    "L - losses\nGS - goals scored\nGC - goals conceded");
 
-        try{
-            sender.execute(new SendMessage()
-                    .setText(message.toString())
-                    .setChatId(chatId)
-                    .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
-        } catch (TelegramApiException e){
-        e.printStackTrace();
+
+                sender.execute(new SendMessage()
+                        .setText(message.toString())
+                        .setChatId(chatId)
+                        .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
+            } else {
+            sendEmptyDatabaseWarning(chatId);
+            }
+        }
+        catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 
@@ -235,18 +254,29 @@ public class ResponseHandler {
     }
 
     public void replyToSetTeam(Long chatId) {
+        List<Team> teams = teamService.getAllTeams();
         try {
-            sender.execute(new SendMessage()
-                    .setText("Choose a team:" )
-                    .setChatId(chatId)
-                    .setReplyMarkup(
-                            KeyboardFactory.teamsList(teamService.getAllTeams()
-                                                            .stream()
-                                                            .map(Team::getTeam)//get team names to set up the buttons
-                                                            .collect(Collectors.toList()))));
+            if (teams.size() > 0){
+                sender.execute(new SendMessage()
+                        .setText("Choose a team:" )
+                        .setChatId(chatId)
+                        .setReplyMarkup(
+                                KeyboardFactory.teamsList(teams.stream()
+                                        .map(Team::getTeam)//get team names to set up the buttons
+                                        .collect(Collectors.toList()))));
+            }else {
+                sendEmptyDatabaseWarning(chatId);
+            }
+
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+    }
+
+    private void sendEmptyDatabaseWarning(Long chatId) throws TelegramApiException {
+        sender.execute(new SendMessage()
+                    .setChatId(chatId)
+                    .setText("Database is empty."));
     }
 
     /**

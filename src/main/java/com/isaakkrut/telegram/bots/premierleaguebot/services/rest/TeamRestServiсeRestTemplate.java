@@ -1,9 +1,13 @@
-/*
+
 package com.isaakkrut.telegram.bots.premierleaguebot.services;
 
+import com.isaakkrut.telegram.bots.premierleaguebot.domain.Assist;
+import com.isaakkrut.telegram.bots.premierleaguebot.domain.Scorer;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Team;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.rest.RestServiсe;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +17,8 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
-@Profile("mockdata")
 @Service
-public class TeamRestServiсeRestTemplate implements TeamRestServiсe {
+public class TeamRestServiсeRestTemplate implements RestServiсe {
 
     @Override
     public Optional<List<Team>> getTeams() {
@@ -55,5 +58,14 @@ public class TeamRestServiсeRestTemplate implements TeamRestServiсe {
                 .build());
         return Optional.of(teams);
     }
+
+    @Override
+    public Optional<List<Scorer>> getScorers() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<List<Assist>> getAssists() {
+        return Optional.empty();
+    }
 }
-*/
