@@ -87,10 +87,37 @@ public class ResponseHandler {
                 case BotConfig.MENU_SET_TEAM:
                     replyToSetTeam(chatId);
                     break;
+                case BotConfig.CREATOR_MENU_RELOAD_ALL:
+                    dataLoader.loadAll(chatId);
+                    sendNumberOfReloadsLeft(chatId);
+                    break;
+                case BotConfig.CREATOR_MENU_RELOAD_ASSISTS:
+                    dataLoader.loadAssists(chatId);
+                    sendNumberOfReloadsLeft(chatId);
+                    break;
+                case BotConfig.CREATOR_MENU_RELOAD_SCORERS:
+                    dataLoader.loadScorers(chatId);
+                    sendNumberOfReloadsLeft(chatId);
+                    break;
+                case BotConfig.CREATOR_MENU_RELOAD_TABLE:
+                    dataLoader.loadTable(chatId);
+                    sendNumberOfReloadsLeft(chatId);
+                    break;
                 default:
                     setFavouriteTeam(chatId, data);
                     replyToTeam(chatId);
             }
+    }
+
+    public void sendNumberOfReloadsLeft(Long chatId) {
+        try {
+            sender.execute(new SendMessage()
+                    .setText("Number of reloads left this month: " + dataLoader.getNumberOfReloadsLeft())
+                    .setChatId(chatId));
+            sendMenuButtons(chatId);
+        } catch (TelegramApiException e){
+            e.printStackTrace();
+        }
     }
 
     public void replyToTopAssists(Long chatId)  {
@@ -239,7 +266,7 @@ public class ResponseHandler {
 
     }
 
-    public void replyToCommands(Long chatId) {
+  /*  public void replyToCommands(Long chatId) {
         try{
             sender.execute(new SendMessage()
                     .setText("Here is the list of available commands:" +
@@ -256,7 +283,7 @@ public class ResponseHandler {
         } catch (TelegramApiException e){
             e.printStackTrace();
         }
-    }
+    }*/
 
     /**
      * sends a message that contains main menu

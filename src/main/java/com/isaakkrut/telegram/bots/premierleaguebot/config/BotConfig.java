@@ -49,7 +49,7 @@ public class BotConfig {
     public static final String TABLE_COMMAND_DESCRIPTION = "Current table";
     public static final String TOP_SCORERS_COMMAND_DESCRIPTION = "Top Scorers";
     public static final String TOP_ASSISTS_COMMAND_DESCRIPTION = "Top Assists";
-    public static final String COMMANDS_COMMAND_DECRIPTION = "List of Available Commands";
+    //public static final String COMMANDS_COMMAND_DECRIPTION = "List of Available Commands";
     public static final String TEAM_COMMAND_DESCRIPTION = "See your favourite team";
     public static final String SET_TEAM_COMMAND_DESCRIPTION = "Set your favourite team";
     public static final String REMOVE_TEAM_COMMAND_DESCRIPTION = "Remove your favourite team";

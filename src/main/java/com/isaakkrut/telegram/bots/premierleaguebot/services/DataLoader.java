@@ -1,8 +1,9 @@
 package com.isaakkrut.telegram.bots.premierleaguebot.services;
 
 public interface DataLoader {
-    int loadAll(Long chatId);
-    int loadAssists(Long chatId);
-    int loadTable(Long chatId);
-    int loadScorers(Long chatId);
+    void loadAll(Long chatId);
+    void loadAssists(Long chatId);
+    void loadTable(Long chatId);
+    void loadScorers(Long chatId);
+    int getNumberOfReloadsLeft();
 }

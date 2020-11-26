@@ -19,6 +19,7 @@ import static org.telegram.abilitybots.api.objects.Privacy.*;
 import static org.telegram.abilitybots.api.util.AbilityUtils.getChatId;
 
 public class PremierLeagueBot extends AbilityBot {
+    public static final org.telegram.abilitybots.api.objects.Privacy privacy = ADMIN;
     private int creatorId;
     private final ResponseHandler responseHandler;
 
@@ -29,17 +30,6 @@ public class PremierLeagueBot extends AbilityBot {
         responseHandler = new ResponseHandler(sender, db, dataLoader, teamService, scorerService, assistService);
     }
 
-    @Override
-    public Ability reportCommands() {
-        return Ability
-                .builder()
-                .name("commands")
-                .info(BotConfig.COMMANDS_COMMAND_DECRIPTION)
-                .locality(ALL)
-                .privacy(ADMIN)
-                .action(ctx ->  responseHandler.replyToCommands(ctx.chatId()))
-                .build();
-    }
 
     public Ability replyToStart() {
         return Ability
@@ -47,7 +37,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .name("start")
                 .info(BotConfig.START_COMMAND_DESCRIPTION)
                 .locality(ALL)
-                .privacy(ADMIN)
+                .privacy(privacy)
                 .action(ctx ->  responseHandler.replyToStart(ctx.chatId()))
                 .build();
     }
@@ -58,7 +48,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .name("menu")
                 .info(BotConfig.MENU_COMMAND_DESCRIPTION)
                 .locality(ALL)
-                .privacy(ADMIN)
+                .privacy(privacy)
                 .action(ctx ->  responseHandler.replyToMenu(ctx.chatId()))
                 .build();
     }
@@ -80,7 +70,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .name("table")
                 .info(BotConfig.TABLE_COMMAND_DESCRIPTION)
                 .locality(ALL)
-                .privacy(ADMIN)
+                .privacy(privacy)
                 .action(ctx ->  responseHandler.replyToTable(ctx.chatId()))
                 .build();
     }
@@ -91,7 +81,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .name("topscorers")
                 .info(BotConfig.TOP_SCORERS_COMMAND_DESCRIPTION)
                 .locality(ALL)
-                .privacy(ADMIN)
+                .privacy(privacy)
                 .action(ctx ->  responseHandler.replyToTopScorers(ctx.chatId()))
                 .build();
     }
@@ -102,7 +92,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .name("topassists")
                 .info(BotConfig.TOP_ASSISTS_COMMAND_DESCRIPTION)
                 .locality(ALL)
-                .privacy(ADMIN)
+                .privacy(privacy)
                 .action(ctx ->  responseHandler.replyToTopAssists(ctx.chatId()))
                 .build();
     }
@@ -113,7 +103,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .name("team")
                 .info(BotConfig.TEAM_COMMAND_DESCRIPTION)
                 .locality(ALL)
-                .privacy(ADMIN)
+                .privacy(privacy)
                 .action(upd -> responseHandler.replyToTeam(upd.chatId()))
                 .build();
     }
@@ -124,7 +114,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .name("setteam")
                 .info(BotConfig.SET_TEAM_COMMAND_DESCRIPTION)
                 .locality(ALL)
-                .privacy(ADMIN)
+                .privacy(privacy)
                 .action(upd -> responseHandler.replyToSetTeam(upd.chatId()))
                 .build();
     }
@@ -134,8 +124,19 @@ public class PremierLeagueBot extends AbilityBot {
                 .name("removeteam")
                 .info(BotConfig.TEAM_COMMAND_DESCRIPTION)
                 .locality(ALL)
-                .privacy(ADMIN)
+                .privacy(privacy)
                 .action(ctx -> responseHandler.removeFavouriteTeam(ctx.chatId()))
+                .build();
+    }
+
+    public Ability replyToReloadsLeft() {
+        return Ability
+                .builder()
+                .name("reloadsleft")
+                .info("Number of calls to the api left this month")
+                .locality(ALL)
+                .privacy(CREATOR)
+                .action(ctx -> responseHandler.sendNumberOfReloadsLeft(ctx.chatId()))
                 .build();
     }
 
@@ -151,4 +152,17 @@ public class PremierLeagueBot extends AbilityBot {
     public int creatorId() {
         return this.creatorId;
     }
+
+    /*
+    @Override
+    public Ability reportCommands() {
+        return Ability
+                .builder()
+                .name("commands")
+                .info(BotConfig.COMMANDS_COMMAND_DECRIPTION)
+                .locality(ALL)
+                .privacy(ADMIN)
+                .action(ctx ->  responseHandler.replyToCommands(ctx.chatId()))
+                .build();
+    }*/
 }

@@ -55,19 +55,20 @@ public class KeyboardFactory {
     public static ReplyKeyboard loadDataOptionsList(){
             InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
             List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
+            List<InlineKeyboardButton> rowInline2 = new ArrayList<>();
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
 
             rowInline.add(new InlineKeyboardButton().setText(BotConfig.CREATOR_MENU_RELOAD_TABLE)
                                                 .setCallbackData(BotConfig.CREATOR_MENU_RELOAD_TABLE));
             rowInline.add(new InlineKeyboardButton().setText(BotConfig.CREATOR_MENU_RELOAD_SCORERS)
                                                 .setCallbackData(BotConfig.CREATOR_MENU_RELOAD_SCORERS));
-            rowInline.add(new InlineKeyboardButton().setText(BotConfig.CREATOR_MENU_RELOAD_ASSISTS)
+            rowInline2.add(new InlineKeyboardButton().setText(BotConfig.CREATOR_MENU_RELOAD_ASSISTS)
                                                 .setCallbackData(BotConfig.CREATOR_MENU_RELOAD_ASSISTS));
 
 
-            List<InlineKeyboardButton> rowInline2 = new ArrayList<>();
 
-            rowInline.add(new InlineKeyboardButton().setText(BotConfig.CREATOR_MENU_RELOAD_ALL)
+
+            rowInline2.add(new InlineKeyboardButton().setText(BotConfig.CREATOR_MENU_RELOAD_ALL)
                     .setCallbackData(BotConfig.CREATOR_MENU_RELOAD_ALL));
 
             rowsInline.add(rowInline);

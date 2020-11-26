@@ -27,16 +27,14 @@ public class DataLoaderImpl implements DataLoader {
     //returns number of updates left this month
     //50 per month is a limit set by REST API
     @Override
-    public int loadAll(Long chatId) {
+    public void loadAll(Long chatId) {
         loadTable(chatId);
         loadScorers(chatId);
         loadAssists(chatId);
-
-        return DataLoaderImpl.UPDATES_LIMIT - (int) updateLogRepository.count();
     }
 
     @Override
-    public int loadTable(Long chatId) {
+    public void loadTable(Long chatId) {
         updateLogRepository.save(UpdateLog.builder()
                 .userIssuedUpdate(chatId)
                 .updateTime(new Date())
@@ -52,12 +50,10 @@ public class DataLoaderImpl implements DataLoader {
         }
 
         log.debug("Number of teams: " + teamRepository.count());
-
-        return DataLoaderImpl.UPDATES_LIMIT - (int) updateLogRepository.count();
     }
 
     @Override
-    public int loadScorers(Long chatId) {
+    public void loadScorers(Long chatId) {
         updateLogRepository.save(UpdateLog.builder()
                 .userIssuedUpdate(chatId)
                 .updateTime(new Date())
@@ -72,11 +68,15 @@ public class DataLoaderImpl implements DataLoader {
         }
 
         log.debug("Number of scorers: " + scorerRepository.count());
-        return DataLoaderImpl.UPDATES_LIMIT - (int) updateLogRepository.count();
     }
 
     @Override
-    public int loadAssists(Long chatId) {
+    public int getNumberOfReloadsLeft() {
+        return UPDATES_LIMIT -(int) updateLogRepository.count();
+    }
+
+    @Override
+    public void loadAssists(Long chatId) {
         updateLogRepository.save(UpdateLog.builder()
                 .userIssuedUpdate(chatId)
                 .updateTime(new Date())
@@ -91,6 +91,5 @@ public class DataLoaderImpl implements DataLoader {
         }
 
         log.debug("Number of assists: " + assistRepository.count());
-        return DataLoaderImpl.UPDATES_LIMIT - (int) updateLogRepository.count();
     }
 }
