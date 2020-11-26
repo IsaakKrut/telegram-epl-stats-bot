@@ -13,14 +13,22 @@ import java.util.List;
 @Component
 public class KeyboardFactory {
 
-    public static ReplyKeyboard mainMenu() {
+    public static ReplyKeyboard mainMenu(String teamName) {
         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         List<InlineKeyboardButton> rowInline = new ArrayList<>();
-        rowInline.add(new InlineKeyboardButton().setText(BotConfig.TABLE).setCallbackData(BotConfig.TABLE));
-        rowInline.add(new InlineKeyboardButton().setText(BotConfig.TOP_SCORERS).setCallbackData(BotConfig.TOP_SCORERS));
-        rowInline.add(new InlineKeyboardButton().setText(BotConfig.TOP_ASSISTS).setCallbackData(BotConfig.TOP_ASSISTS));
+        List<InlineKeyboardButton> rowInline2 = new ArrayList<>();
+        rowInline.add(new InlineKeyboardButton().setText(BotConfig.MENU_TABLE).setCallbackData(BotConfig.MENU_TABLE));
+        rowInline.add(new InlineKeyboardButton().setText(BotConfig.MENU_TOP_SCORERS).setCallbackData(BotConfig.MENU_TOP_SCORERS));
+        rowInline.add(new InlineKeyboardButton().setText(BotConfig.MENU_TOP_ASSISTS).setCallbackData(BotConfig.MENU_TOP_ASSISTS));
+        if (teamName == null){
+            rowInline2.add(new InlineKeyboardButton().setText(BotConfig.MENU_SET_TEAM).setCallbackData(BotConfig.MENU_SET_TEAM));
+        }else {
+            rowInline2.add(new InlineKeyboardButton().setText(teamName).setCallbackData(teamName));
+            rowInline2.add(new InlineKeyboardButton().setText(BotConfig.MENU_REMOVE_TEAM).setCallbackData(BotConfig.MENU_REMOVE_TEAM));
+        }
         rowsInline.add(rowInline);
+        rowsInline.add(rowInline2);
         inlineKeyboard.setKeyboard(rowsInline);
         return inlineKeyboard;
     }
