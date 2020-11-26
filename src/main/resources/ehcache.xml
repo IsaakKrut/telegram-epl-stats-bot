@@ -6,6 +6,7 @@
     </service>
 
     <cache alias="teamsCache" uses-template="config-cache"/>
+    <cache alias="scorersCache" uses-template="config-cache"/>
 
     <cache-template name="config-cache">
         <expiry>
