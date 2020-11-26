@@ -1,7 +1,7 @@
 package com.isaakkrut.telegram.bots.premierleaguebot.bootstrap;
 
 
-import com.isaakkrut.telegram.bots.premierleaguebot.PremierLeagueBot;
+import com.isaakkrut.telegram.bots.premierleaguebot.bot.PremierLeagueBot;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
