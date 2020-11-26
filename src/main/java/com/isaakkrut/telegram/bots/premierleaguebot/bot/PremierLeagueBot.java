@@ -1,8 +1,8 @@
-package com.isaakkrut.telegram.bots.premierleaguebot;
+package com.isaakkrut.telegram.bots.premierleaguebot.bot;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.config.BotConfig;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.ResponseHandler;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.scorer.ScorerService;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.team.TeamService;
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.abilitybots.api.objects.Ability;
@@ -21,10 +21,10 @@ public class PremierLeagueBot extends AbilityBot {
     private int creatorId;
     private final ResponseHandler responseHandler;
 
-    public PremierLeagueBot(String botToken, String botUsername, int creatorId, TeamService teamService, DataLoader dataLoader) {
+    public PremierLeagueBot(String botToken, String botUsername, int creatorId, TeamService teamService, ScorerService scorerService, DataLoader dataLoader) {
         super(botToken, botUsername);
         this.creatorId = creatorId;
-        responseHandler = new ResponseHandler(sender, db, teamService, dataLoader);
+        responseHandler = new ResponseHandler(sender, db, teamService, scorerService, dataLoader);
     }
 
     @Override
@@ -112,14 +112,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .info(BotConfig.TEAM_COMMAND_DESCRIPTION)
                 .locality(ALL)
                 .privacy(ADMIN)
-                .action(upd ->  {
-                    if (upd.arguments().length == 0){
-                        responseHandler.replyToTeam(upd.chatId());
-                    } else{
-                        responseHandler.setFavouriteTeam(upd.chatId(), upd.arguments());
-                    }
-
-                })
+                .action(upd -> responseHandler.replyToTeam(upd.chatId()))
                 .build();
     }
 
@@ -130,14 +123,7 @@ public class PremierLeagueBot extends AbilityBot {
                 .info(BotConfig.SET_TEAM_COMMAND_DESCRIPTION)
                 .locality(ALL)
                 .privacy(ADMIN)
-                .action(upd ->  {
-                    if (upd.arguments().length == 0){
-                        responseHandler.replyToSetTeam(upd.chatId());
-                    } else{
-                        responseHandler.setFavouriteTeam(upd.chatId(), upd.arguments());
-                    }
-
-                })
+                .action(upd -> responseHandler.replyToSetTeam(upd.chatId()))
                 .build();
     }
     public Ability replyToRemoveTeam() {
