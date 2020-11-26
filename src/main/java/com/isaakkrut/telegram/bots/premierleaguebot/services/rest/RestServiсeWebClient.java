@@ -1,7 +1,10 @@
 package com.isaakkrut.telegram.bots.premierleaguebot.services.rest;
 
+import com.isaakkrut.telegram.bots.premierleaguebot.domain.Scorer;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Team;
+import com.isaakkrut.telegram.bots.premierleaguebot.mappers.ScorerMapper;
 import com.isaakkrut.telegram.bots.premierleaguebot.mappers.TeamMapper;
+import com.isaakkrut.telegram.bots.premierleaguebot.model.ScorerListDto;
 import com.isaakkrut.telegram.bots.premierleaguebot.model.TeamListDto;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,17 +19,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 @ConfigurationProperties(prefix = "rapidapi")
 @Service
-public class TeamRestServiсeWebClient implements TeamRestServiсe {
+public class RestServiсeWebClient implements RestServiсe {
     private String xRapidapiKey;
     private String xRapidapiHost;
     private String url;
     private String tableUri;
+    private String scorersUri;
 
     private WebClient webClient;
 
-    public TeamRestServiсeWebClient(WebClient.Builder webClientBuilder){
+    public RestServiсeWebClient(WebClient.Builder webClientBuilder){
         webClient = WebClient.create();
-       // webClient = webClientBuilder.baseUrl("http://localhost:8080").build();
     }
 
 
@@ -38,8 +41,8 @@ public class TeamRestServiсeWebClient implements TeamRestServiсe {
                 .header("x-rapidapi-key", xRapidapiKey)
                 .header("x-rapidapi-host", xRapidapiHost)
                 .retrieve()
-               .bodyToMono(TeamListDto.class)
-               .block();
+                .bodyToMono(TeamListDto.class)
+                .block();
 
        //convert to Team objects and set current position in the table
         List<Team> teams = new ArrayList<>();
@@ -51,9 +54,29 @@ public class TeamRestServiсeWebClient implements TeamRestServiсe {
             teams.add(team);
         });
 
-
-
         return Optional.of(teams);
+    }
+
+    @Override
+    public Optional<List<Scorer>> getScorers() {
+        ScorerListDto scorersDto = webClient.get()
+                .uri(url + scorersUri)
+                .header("x-rapidapi-key", xRapidapiKey)
+                .header("x-rapidapi-host", xRapidapiHost)
+                .retrieve()
+                .bodyToMono(ScorerListDto.class)
+                .block();
+
+        //convert to Team objects and set current position in the table
+        List<Scorer> scorers = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger(1);
+
+        scorersDto.getScorers().forEach(dto -> {
+            Scorer scorer = ScorerMapper.scorerDtoToScorer(dto);
+            scorer.setPlace(count.getAndIncrement());
+            scorers.add(scorer);
+        });
+        return Optional.of(scorers);
     }
 
 }
