@@ -3,6 +3,7 @@ package com.isaakkrut.telegram.bots.premierleaguebot.services.assist;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Assist;
 import com.isaakkrut.telegram.bots.premierleaguebot.repositories.AssistRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.List;
 public class AssistServiceJpa implements AssistService {
 
     private final AssistRepository assistRepository;
+
+    @Cacheable(cacheNames = "assistsCache")
     @Override
     public List<Assist> getAllAssists() {
         List<Assist> assists = new ArrayList<>();

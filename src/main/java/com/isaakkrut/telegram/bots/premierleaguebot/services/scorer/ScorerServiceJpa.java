@@ -15,8 +15,7 @@ import java.util.List;
 public class ScorerServiceJpa implements ScorerService {
     private final ScorerRepository scorerRepository;
 
-    @Cacheable(
-            value = "scorersCache")
+    @Cacheable(cacheNames = "scorersCache")
     @Override
     public List<Scorer> getAllScorers() {
         List<Scorer> scorers = new ArrayList<>();

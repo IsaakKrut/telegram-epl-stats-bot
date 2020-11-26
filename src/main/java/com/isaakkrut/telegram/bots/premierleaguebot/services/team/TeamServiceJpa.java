@@ -15,8 +15,7 @@ public class TeamServiceJpa implements TeamService {
     private final TeamRepository teamRepository;
 
 
-    @Cacheable(
-            value = "teamsCache")
+    @Cacheable(cacheNames = "teamsCache")
     @Override
     public List<Team> getAllTeams() {
         List<Team> teams = new ArrayList<>();
@@ -24,6 +23,7 @@ public class TeamServiceJpa implements TeamService {
         return teams;
     }
 
+    @Cacheable(cacheNames = "singleTeamCache", key = "#name")
     @Override
     public Team getTeamByName(String name) {
         return teamRepository.findByTeam(name).orElse(null);
