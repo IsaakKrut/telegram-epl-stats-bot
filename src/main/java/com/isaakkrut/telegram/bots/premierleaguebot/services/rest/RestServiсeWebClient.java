@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * This implementation retrieves data from target REST API using WebClient
+ */
+
 @Setter
 @ConfigurationProperties(prefix = "rapidapi")
 @Service

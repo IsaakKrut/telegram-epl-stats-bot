@@ -12,6 +12,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+/**
+ * This class is an abstraction to the RestService.
+ * It persists data returned by RestService
+ */
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -24,8 +29,6 @@ public class DataLoaderImpl implements DataLoader {
     private static final int  UPDATES_LIMIT = 50;
 
 
-    //returns number of updates left this month
-    //50 per month is a limit set by REST API
     @Override
     public void loadAll(Long chatId) {
         loadTable(chatId);

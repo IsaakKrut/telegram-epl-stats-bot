@@ -18,10 +18,25 @@ import static org.telegram.abilitybots.api.objects.Locality.USER;
 import static org.telegram.abilitybots.api.objects.Privacy.*;
 import static org.telegram.abilitybots.api.util.AbilityUtils.getChatId;
 
+/**
+ * This is the main Bot class.
+ * It extends AbilityBot and all methods that return Ability are mapped
+ * to a corresponding user command or request.
+ * All business logic regarding responses to user input is located inside
+ * ResponseHandler class.
+ */
+
 public class PremierLeagueBot extends AbilityBot {
     public static final org.telegram.abilitybots.api.objects.Privacy privacy = ADMIN;
     private int creatorId;
     private final ResponseHandler responseHandler;
+
+    /**
+     * sender - implementation of the MessageSender interface provided by AbilityBot.
+     *      It delivers our messages to the user and we pass it to the ResponseHandler.
+     * db - embedded telegram database, which allows us to store maps, lists, or sets.
+     *      We use it to store user's choices of their favourite teams inside a map.
+     */
 
     public PremierLeagueBot(String botToken, String botUsername, int creatorId, DataLoader dataLoader
             , TeamService teamService, ScorerService scorerService, AssistService assistService) {
@@ -29,6 +44,12 @@ public class PremierLeagueBot extends AbilityBot {
         this.creatorId = creatorId;
         responseHandler = new ResponseHandler(sender, db, dataLoader, teamService, scorerService, assistService);
     }
+
+    /**
+     * name(String name) method of Ability maps its action to the /{name} command sent by the user
+     * action method specifies response to the command.
+     * @return
+     */
 
 
     public Ability replyToStart() {
@@ -141,6 +162,11 @@ public class PremierLeagueBot extends AbilityBot {
     }
 
 
+    /**
+     * This method gets called when the user presses any of the menu buttons, which sends Flag.CALLBACK_QUERY
+     * @return action associated with pressing a button, logic is inside ResponseHandler class
+     */
+
     public Reply replyToButtons() {
         Consumer<Update> action = upd -> responseHandler.replyToButtons(getChatId(upd), upd.getCallbackQuery().getData());
         return Reply.of(action, Flag.CALLBACK_QUERY);
@@ -152,17 +178,4 @@ public class PremierLeagueBot extends AbilityBot {
     public int creatorId() {
         return this.creatorId;
     }
-
-    /*
-    @Override
-    public Ability reportCommands() {
-        return Ability
-                .builder()
-                .name("commands")
-                .info(BotConfig.COMMANDS_COMMAND_DECRIPTION)
-                .locality(ALL)
-                .privacy(ADMIN)
-                .action(ctx ->  responseHandler.replyToCommands(ctx.chatId()))
-                .build();
-    }*/
 }

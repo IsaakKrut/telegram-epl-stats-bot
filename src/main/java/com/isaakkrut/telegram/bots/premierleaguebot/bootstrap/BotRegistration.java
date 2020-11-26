@@ -10,12 +10,15 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+/**
+ * This class register our bot with Telegram Bots API
+ */
+
 @RequiredArgsConstructor
 @Component
 public class BotRegistration implements CommandLineRunner {
 
     private final PremierLeagueBot bot;
-    private final DataLoader dataLoader;
 
 
     @Override

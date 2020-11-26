@@ -21,6 +21,15 @@ public class BotConfig {
     private String botUsername;
     private int creatorId;
 
+    /**
+     * This method tells Spring how we would like to configure our bot
+     * @param dataLoader - service that reloads data used by the bot. In our case from a REST API
+     * @param teamService - service that returns Team objects
+     * @param scorerService - service that returns Scorer objects
+     * @param assistService - service that returns Assist objects
+     * @return loads configured instance of the bot to the context
+     */
+
     @Bean
     public PremierLeagueBot getBot(DataLoader dataLoader, TeamService teamService, ScorerService scorerService, AssistService assistService){
         return new PremierLeagueBot(botToken, botUsername, creatorId, dataLoader, teamService, scorerService, assistService);

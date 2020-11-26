@@ -9,6 +9,10 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboar
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class returns menu layouts
+ */
+
 @RequiredArgsConstructor
 @Component
 public class KeyboardFactory {
@@ -64,9 +68,6 @@ public class KeyboardFactory {
                                                 .setCallbackData(BotConfig.CREATOR_MENU_RELOAD_SCORERS));
             rowInline2.add(new InlineKeyboardButton().setText(BotConfig.CREATOR_MENU_RELOAD_ASSISTS)
                                                 .setCallbackData(BotConfig.CREATOR_MENU_RELOAD_ASSISTS));
-
-
-
 
             rowInline2.add(new InlineKeyboardButton().setText(BotConfig.CREATOR_MENU_RELOAD_ALL)
                     .setCallbackData(BotConfig.CREATOR_MENU_RELOAD_ALL));

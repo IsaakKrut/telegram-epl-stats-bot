@@ -14,11 +14,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.abilitybots.api.db.DBContext;
 import org.telegram.abilitybots.api.sender.MessageSender;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+/**
+ * This class stores business logic for our bot.
+ * All methods that start with reply define logic to execute in response to user input.
+ * All reply method are public, unless specified otherwise.
+ * Then it uses sender interface to send data back to the user.
+ * favouriteTeams map stores favourite teams for each user.
+ */
 
 @Slf4j
 @Setter
@@ -29,7 +38,6 @@ public class ResponseHandler {
     private final TeamService teamService;
     private final ScorerService scorerService;
     private final AssistService assistService;
-
     private final DataLoader dataLoader;
 
     public ResponseHandler(MessageSender sender, DBContext db, DataLoader dataLoader
@@ -40,7 +48,6 @@ public class ResponseHandler {
         this.teamService = teamService;
         this.scorerService = scorerService;
         this.assistService = assistService;
-
     }
 
     public void replyToStart(Long chatId) {
@@ -48,6 +55,10 @@ public class ResponseHandler {
             sender.execute(new SendMessage()
                     .setText(BotConfig.START_MESSAGE)
                     .setChatId(chatId));
+            SendPhoto message = new SendPhoto().setChatId(chatId)
+                    .setPhoto("https://i.redd.it/zq5ch5o7z1f51.jpg");
+
+            sender.sendPhoto(message);
 
            replyToMenu(chatId);
 
@@ -62,8 +73,8 @@ public class ResponseHandler {
         try {
             sender.execute(new SendMessage()
                     .setText(BotConfig.MAIN_MENU_MESSAGE)
-                    .setChatId(chatId));
-            sendMenuButtons(chatId);
+                    .setChatId(chatId)
+                    .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
 
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -109,17 +120,6 @@ public class ResponseHandler {
             }
     }
 
-    public void sendNumberOfReloadsLeft(Long chatId) {
-        try {
-            sender.execute(new SendMessage()
-                    .setText("Number of reloads left this month: " + dataLoader.getNumberOfReloadsLeft())
-                    .setChatId(chatId));
-            sendMenuButtons(chatId);
-        } catch (TelegramApiException e){
-            e.printStackTrace();
-        }
-    }
-
     public void replyToTopAssists(Long chatId)  {
         StringBuilder message = new StringBuilder("Premier League Top Assists - 2020/2021\n\n");
         log.debug("Number of assists: " + assistService.getAllAssists().size());
@@ -129,8 +129,8 @@ public class ResponseHandler {
         try {
             sender.execute(new SendMessage()
                     .setText(message.toString())
-                    .setChatId(chatId));
-            sendMenuButtons(chatId);
+                    .setChatId(chatId)
+                    .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
         } catch (TelegramApiException e){
             e.printStackTrace();
         }
@@ -149,8 +149,8 @@ public class ResponseHandler {
         try{
             sender.execute(new SendMessage()
                     .setText(message.toString())
-                    .setChatId(chatId));
-            sendMenuButtons(chatId);
+                    .setChatId(chatId)
+                    .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
         } catch (TelegramApiException e){
         e.printStackTrace();
         }
@@ -170,8 +170,8 @@ public class ResponseHandler {
         try{
             sender.execute(new SendMessage()
                     .setText(message.toString())
-                    .setChatId(chatId));
-            sendMenuButtons(chatId);
+                    .setChatId(chatId)
+                    .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
         } catch (TelegramApiException e){
         e.printStackTrace();
         }
@@ -195,8 +195,8 @@ public class ResponseHandler {
         try {
             sender.execute(new SendMessage()
                     .setText("Your favourite team has been successfully removed")
-                    .setChatId(chatId));
-            sendMenuButtons(chatId);
+                    .setChatId(chatId)
+                    .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
 
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -215,8 +215,8 @@ public class ResponseHandler {
                 } else{
                     message.setText("Team is not found."); // should not get here as we validate teams before setting them
                 }
+                message.setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
                 sender.execute(message);
-                sendMenuButtons(chatId);
 
             } catch (TelegramApiException e) {
                 e.printStackTrace();
@@ -237,7 +237,7 @@ public class ResponseHandler {
     public void replyToSetTeam(Long chatId) {
         try {
             sender.execute(new SendMessage()
-                    .setText("Choose one of the following:" )
+                    .setText("Choose a team:" )
                     .setChatId(chatId)
                     .setReplyMarkup(
                             KeyboardFactory.teamsList(teamService.getAllTeams()
@@ -249,6 +249,11 @@ public class ResponseHandler {
         }
     }
 
+    /**
+     * Command triggers data reload. Only available to the Creator user.
+     * @param chatId - chatId of the user requested the action
+     * @param creatorId - used to ensure user requested the action is the Creator
+     */
 
     public void replyToLoadData(Long chatId, int creatorId) {
         //only creator is allowed to reload data
@@ -263,43 +268,33 @@ public class ResponseHandler {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-
     }
 
-  /*  public void replyToCommands(Long chatId) {
-        try{
-            sender.execute(new SendMessage()
-                    .setText("Here is the list of available commands:" +
-                            "\n  /start - "+ BotConfig.START_COMMAND_DESCRIPTION +
-                            "\n  /menu - "+ BotConfig.MENU_COMMAND_DESCRIPTION +
-                            "\n  /table - " + BotConfig.TABLE_COMMAND_DESCRIPTION +
-                            "\n  /topassists - " + BotConfig.TOP_ASSISTS_COMMAND_DESCRIPTION +
-                            "\n  /topscorers - " + BotConfig.TOP_SCORERS_COMMAND_DESCRIPTION +
-                            "\n  /team - " + BotConfig.TEAM_COMMAND_DESCRIPTION +
-                            "\n  /setteam - " + BotConfig.SET_TEAM_COMMAND_DESCRIPTION +
-                            "\n  /removeteam - " + BotConfig.REMOVE_TEAM_COMMAND_DESCRIPTION)
-
-                    .setChatId(chatId));
-        } catch (TelegramApiException e){
-            e.printStackTrace();
-        }
-    }*/
-
     /**
-     * sends a message that contains main menu
+     * REST API has a limited number of request per month.
+     * This Creator only command sends number of requests left in the current month.
      * @param chatId
      */
 
-    private void sendMenuButtons(Long chatId) {
-        //get favourite team or set it to null for menu buttons logic
-        String teamName = favouriteTeams.containsKey(chatId) ? favouriteTeams.get(chatId) : null;
+    public void sendNumberOfReloadsLeft(Long chatId) {
+
         try {
             sender.execute(new SendMessage()
-                    .setText("Choose one of the following:")
+                    .setText("Number of reloads left this month: " + dataLoader.getNumberOfReloadsLeft())
                     .setChatId(chatId)
-                    .setReplyMarkup(KeyboardFactory.mainMenu(teamName)));
+                    .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId))));
         } catch (TelegramApiException e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     *
+     * @param chatId -key used to search for the team in our map
+     * @return team name for the current user or null if it is not found
+     */
+
+    private String getTeamName(Long chatId){
+        return favouriteTeams.getOrDefault(chatId, null);
     }
 }
