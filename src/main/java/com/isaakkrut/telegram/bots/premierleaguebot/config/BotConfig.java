@@ -25,12 +25,6 @@ public class BotConfig {
     @Autowired
     private WebhookResponseHandler responseHandler;
 
-
-  /*  @Bean
-    public PremierLeagueBot getBot(DataLoader dataLoader, TeamService teamService, ScorerService scorerService, AssistService assistService){
-        return new PremierLeagueBot(botToken, botUsername, creatorId, dataLoader, teamService, scorerService, assistService);
-    }*/
-
     @Bean
     public PremierLeagueWebhookBot getWebhookBot(){
         DefaultBotOptions options = ApiContext

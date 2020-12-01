@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
+@Profile("mockdata")
 @Service
 public class TeamRestServiсeRestTemplate implements RestServiсe {
 
