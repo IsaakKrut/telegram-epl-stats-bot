@@ -3,6 +3,7 @@ package com.isaakkrut.telegram.bots.premierleaguebot.services;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.UpdateLog;
 import com.isaakkrut.telegram.bots.premierleaguebot.repositories.UpdateLogRepository;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.rest.RestServiсe;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.rest.RestServiсeWebClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

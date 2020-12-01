@@ -1,15 +1,15 @@
 package com.isaakkrut.telegram.bots.premierleaguebot.config;
 
-import com.isaakkrut.telegram.bots.premierleaguebot.bot.PremierLeagueBot;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.AssistService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.ScorerService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.TeamService;
+import com.isaakkrut.telegram.bots.premierleaguebot.bot.PremierLeagueWebhookBot;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.responsehandlers.WebhookResponseHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambots.ApiContext;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
 
 @Setter
 @RequiredArgsConstructor
@@ -20,19 +20,22 @@ public class BotConfig {
     private String botToken;
     private String botUsername;
     private int creatorId;
+    private String botPath;
 
-    /**
-     * This method tells Spring how we would like to configure our bot
-     * @param dataLoader - service that reloads data used by the bot. In our case from a REST API
-     * @param teamService - service that returns Team objects
-     * @param scorerService - service that returns Scorer objects
-     * @param assistService - service that returns Assist objects
-     * @return loads configured instance of the bot to the context
-     */
+    @Autowired
+    private WebhookResponseHandler responseHandler;
 
-    @Bean
+
+  /*  @Bean
     public PremierLeagueBot getBot(DataLoader dataLoader, TeamService teamService, ScorerService scorerService, AssistService assistService){
         return new PremierLeagueBot(botToken, botUsername, creatorId, dataLoader, teamService, scorerService, assistService);
+    }*/
+
+    @Bean
+    public PremierLeagueWebhookBot getWebhookBot(){
+        DefaultBotOptions options = ApiContext
+                .getInstance(DefaultBotOptions.class);
+        return new PremierLeagueWebhookBot(options, botUsername, botToken, creatorId, botPath, responseHandler);
     }
 
     //messages

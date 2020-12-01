@@ -1,3 +1,4 @@
+/*
 package com.isaakkrut.telegram.bots.premierleaguebot.bootstrap;
 
 
@@ -10,9 +11,11 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+*/
 /**
  * This class register our bot with Telegram Bots API
- */
+ *//*
+
 
 @RequiredArgsConstructor
 @Component
@@ -23,14 +26,12 @@ public class BotRegistration implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Initializes dependencies necessary for the base bot
-        ApiContextInitializer.init();
 
         // Create the TelegramBotsApi object to register your bots
         TelegramBotsApi botsApi = new TelegramBotsApi();
 
         try {
-            // Register your newly created AbilityBot
+            // Register bot
             botsApi.registerBot(bot);
 
         } catch (TelegramApiException e) {
@@ -39,3 +40,4 @@ public class BotRegistration implements CommandLineRunner {
 
     }
 }
+*/

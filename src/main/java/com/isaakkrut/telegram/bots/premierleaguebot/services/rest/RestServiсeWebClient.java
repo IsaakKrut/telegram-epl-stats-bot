@@ -52,6 +52,7 @@ public class RestServiсeWebClient implements RestServiсe {
                 .header("x-rapidapi-host", xRapidapiHost)
                 .retrieve()
                 .bodyToMono(TeamListDto.class)
+               .toProcessor()
                 .block();
 
        //convert to Team objects and set current position in the table
@@ -75,6 +76,7 @@ public class RestServiсeWebClient implements RestServiсe {
                 .header("x-rapidapi-host", xRapidapiHost)
                 .retrieve()
                 .bodyToMono(ScorerListDto.class)
+                .toProcessor()
                 .block();
 
         //convert to Team objects and set current position in the table
@@ -97,6 +99,7 @@ public class RestServiсeWebClient implements RestServiсe {
                 .header("x-rapidapi-host", xRapidapiHost)
                 .retrieve()
                 .bodyToMono(AssistListDto.class)
+                .toProcessor()
                 .block();
 
         //convert to Team objects and set current position in the table
