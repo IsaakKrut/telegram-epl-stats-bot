@@ -2,7 +2,6 @@ package com.isaakkrut.telegram.bots.premierleaguebot.bot;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.services.responsehandlers.WebhookResponseHandler;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;

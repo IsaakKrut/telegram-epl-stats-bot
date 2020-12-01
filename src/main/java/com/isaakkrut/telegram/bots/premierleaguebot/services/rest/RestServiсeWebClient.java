@@ -1,3 +1,4 @@
+/*
 package com.isaakkrut.telegram.bots.premierleaguebot.services.rest;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Assist;
@@ -20,9 +21,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+*/
 /**
  * This implementation retrieves data from target REST API using WebClient
- */
+ *//*
+
 
 @Setter
 @ConfigurationProperties(prefix = "rapidapi")
@@ -79,7 +82,7 @@ public class RestServiсeWebClient implements RestServiсe {
                 .toProcessor()
                 .block();
 
-        //convert to Team objects and set current position in the table
+        //convert to Scorer objects and set current position in the table
         List<Scorer> scorers = new ArrayList<>();
         AtomicInteger count = new AtomicInteger(1);
 
@@ -102,7 +105,7 @@ public class RestServiсeWebClient implements RestServiсe {
                 .toProcessor()
                 .block();
 
-        //convert to Team objects and set current position in the table
+        //convert to Assist objects and set current position in the table
         List<Assist> assists = new ArrayList<>();
         AtomicInteger count = new AtomicInteger(1);
 
@@ -115,3 +118,4 @@ public class RestServiсeWebClient implements RestServiсe {
     }
 
 }
+*/
