@@ -54,7 +54,7 @@ public class ResponseProvider {
         List<Team> teams = teamService.getAllTeams();
 
         if (teams.size() == 0){
-            return sendMessage.setText("Database is empty");
+            sendMessage.setText("Database is empty");
         } else {
         StringBuilder message = new StringBuilder("Premier League table - season 2020/2021\n\n");
 
@@ -77,7 +77,7 @@ public class ResponseProvider {
         List<Assist> assists = assistService.getAllAssists();
 
         if (assists.size() == 0){
-            return sendMessage.setText("Database is empty");
+            sendMessage.setText("Database is empty");
         } else {
             StringBuilder message = new StringBuilder("Premier League Top Assists - season 2020/2021\n\n");
 
@@ -97,7 +97,7 @@ public class ResponseProvider {
         List<Scorer> scorers = scorerService.getAllScorers();
 
         if (scorers.size() == 0){
-            return sendMessage.setText("Database is empty");
+            sendMessage.setText("Database is empty");
         } else {
             StringBuilder message = new StringBuilder("Premier League Top Scorers - season 2020/2021\n\n");
 
