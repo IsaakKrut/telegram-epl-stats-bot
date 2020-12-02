@@ -2,10 +2,12 @@ package com.isaakkrut.telegram.bots.premierleaguebot.mappers;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Team;
 import com.isaakkrut.telegram.bots.premierleaguebot.model.TeamDto;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TeamMapper {
 
-    public static Team teamDtoToTeam(TeamDto dto){
+    public Team teamDtoToTeam(TeamDto dto){
         return Team.builder()
                 .draw(dto.getDraw())
                 .goalsAgainst(dto.getGoalsAgainst())

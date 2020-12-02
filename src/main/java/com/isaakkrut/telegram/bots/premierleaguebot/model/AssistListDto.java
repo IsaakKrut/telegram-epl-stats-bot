@@ -3,6 +3,9 @@ package com.isaakkrut.telegram.bots.premierleaguebot.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -11,6 +14,10 @@ import java.util.List;
 @JsonPropertyOrder({
         "tablestat"
 })
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AssistListDto {
     @JsonProperty("tablestat")
     private List<AssistDto> tablestat = null;

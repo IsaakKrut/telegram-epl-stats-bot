@@ -10,6 +10,7 @@ import com.isaakkrut.telegram.bots.premierleaguebot.mappers.TeamMapper;
 import com.isaakkrut.telegram.bots.premierleaguebot.model.AssistListDto;
 import com.isaakkrut.telegram.bots.premierleaguebot.model.ScorerListDto;
 import com.isaakkrut.telegram.bots.premierleaguebot.model.TeamListDto;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,11 +27,12 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Setter
+@Getter
 @ConfigurationProperties(prefix = "rapidapi")
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class TeamRestServiсeRestTemplate implements RestServiсe {
+public class TeamRestServiceRestTemplate implements RestServiсe {
 
     private String xRapidapiKey;
     private String xRapidapiHost;
@@ -39,6 +41,9 @@ public class TeamRestServiсeRestTemplate implements RestServiсe {
     private String scorersUri;
     private String assistsUri;
 
+    private final TeamMapper teamMapper;
+    private final AssistMapper assistMapper;
+    private final ScorerMapper scorerMapper;
     private final RestTemplate restTemplate;
 
     @Override
@@ -57,7 +62,7 @@ public class TeamRestServiсeRestTemplate implements RestServiсe {
         AtomicInteger count = new AtomicInteger(1);
 
         teamsDto.getRecords().forEach(dto -> {
-            Team team = TeamMapper.teamDtoToTeam(dto);
+            Team team = teamMapper.teamDtoToTeam(dto);
             team.setPlace(count.getAndIncrement());
             teams.add(team);
         });
@@ -82,7 +87,7 @@ public class TeamRestServiсeRestTemplate implements RestServiсe {
         AtomicInteger count = new AtomicInteger(1);
 
         scorersDto.getScorers().forEach(dto -> {
-            Scorer scorer = ScorerMapper.scorerDtoToScorer(dto);
+            Scorer scorer = scorerMapper.scorerDtoToScorer(dto);
             scorer.setPlace(count.getAndIncrement());
             scorers.add(scorer);
         });
@@ -104,7 +109,7 @@ public class TeamRestServiсeRestTemplate implements RestServiсe {
         AtomicInteger count = new AtomicInteger(1);
 
         assistsDto.getTablestat().forEach(dto -> {
-            Assist assist = AssistMapper.assistDtoToAssist(dto);
+            Assist assist = assistMapper.assistDtoToAssist(dto);
             assist.setPlace(count.getAndIncrement());
             assists.add(assist);
         });
