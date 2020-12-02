@@ -16,6 +16,11 @@ public class WebHookController {
 
     private final PremierLeagueWebhookBot bot;
 
+    /**
+     * This method receives WebHooks from Telegram API whenever a user sends a request.
+     * @param update
+     * @return
+     */
 
     @PostMapping("/")
     BotApiMethod onWebhookReceiver(@RequestBody Update update){

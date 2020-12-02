@@ -2,6 +2,7 @@ package com.isaakkrut.telegram.bots.premierleaguebot.config;
 
 import com.isaakkrut.telegram.bots.premierleaguebot.bot.PremierLeagueWebhookBot;
 import com.isaakkrut.telegram.bots.premierleaguebot.services.responsehandlers.WebhookResponseHandler;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.telegram.telegrambots.ApiContext;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 
 @Setter
+@Getter
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "telegram")
 @Configuration

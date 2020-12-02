@@ -16,6 +16,12 @@ public class WebhookResponseHandler {
 
     private final ResponseProvider responseProvider;
 
+    /**
+     * This method receives updates from the bot and sends it down the flow based on whether the update is a
+     * command (message starting with '/') or a callback query(pressed button). It returns a reply to the user
+     * @param update
+     * @return
+     */
     public BotApiMethod handleUpdate(Update update) {
 
         if (update.hasCallbackQuery()){
@@ -31,6 +37,12 @@ public class WebhookResponseHandler {
         return null;
     }
 
+    /**
+     * This method get called if an update from the user is a command.
+     * It returns a reply to the user based on the command sent
+     * @param update
+     * @return
+     */
     private BotApiMethod processCommand(Update update) {
         String command = update.getMessage().getText();
         Long chatId = update.getMessage().getChatId();
@@ -59,6 +71,12 @@ public class WebhookResponseHandler {
         }
     }
 
+    /**
+     * This method get called if an update from the user is Callback Query(button pressed by the user).
+     * It returns a reply to the user based on the button pressed
+     * @param callbackQuery
+     * @return
+     */
     private BotApiMethod processCallbackQuery(CallbackQuery callbackQuery) {
         String data = callbackQuery.getData();
         Long chatId = callbackQuery.getMessage().getChatId();

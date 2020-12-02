@@ -31,7 +31,13 @@ public class ResponseProvider {
     private final AssistService assistService;
     private final DataLoader dataLoader;
     private final Map<Long, String > favouriteTeams = new HashMap<>();
+    private BotConfig botConfig = new BotConfig();
 
+    /**
+     * This method returns a message that is a reply to the "/start" command
+     * @param chatId
+     * @return
+     */
     public BotApiMethod replyToStart(Long chatId) {
 
         return new SendMessage()
@@ -40,6 +46,11 @@ public class ResponseProvider {
                 .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
     }
 
+    /**
+     * This method returns a message that is a reply to the "/menu" command
+     * @param chatId
+     * @return
+     */
     public BotApiMethod replyToMenu(Long chatId) {
 
         return new SendMessage()
@@ -48,7 +59,11 @@ public class ResponseProvider {
                 .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
     }
 
-
+    /**
+     * This method returns a message that is a reply to the "/table" command or the pressed "Table" button
+     * @param chatId
+     * @return
+     */
     public BotApiMethod replyToTable(Long chatId) {
         SendMessage sendMessage = new SendMessage().setChatId(chatId);
         List<Team> teams = teamService.getAllTeams();
@@ -72,6 +87,11 @@ public class ResponseProvider {
         return sendMessage.setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
     }
 
+    /**
+     * This method returns a message that is a reply to the "/topassists" command or the pressed "Top Assists" button
+     * @param chatId
+     * @return
+     */
     public BotApiMethod replyToTopAssists(Long chatId) {
         SendMessage sendMessage = new SendMessage().setChatId(chatId);
         List<Assist> assists = assistService.getAllAssists();
@@ -92,6 +112,11 @@ public class ResponseProvider {
         return sendMessage.setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
     }
 
+    /**
+     * This method returns a message that is a reply to the "/topscorers" command or the pressed "Top Scorers" button
+     * @param chatId
+     * @return
+     */
     public BotApiMethod replyToTopScorers(Long chatId) {
         SendMessage sendMessage = new SendMessage().setChatId(chatId);
         List<Scorer> scorers = scorerService.getAllScorers();
@@ -113,12 +138,28 @@ public class ResponseProvider {
         return sendMessage.setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
     }
 
+    /**
+     * This command is only available for the bot creator. It responds with options of what to reload
+     * @param chatId
+     * @return
+     */
     public BotApiMethod replyToLoadData(Long chatId) {
+        if (chatId!= botConfig.getCreatorId()){
+            return new SendMessage()
+                    .setChatId(chatId)
+                    .setText("Access Denied!!!");
+        }
         return new SendMessage()
                 .setChatId(chatId)
                 .setText("What would you like to reload?")
                 .setReplyMarkup(KeyboardFactory.loadDataOptionsList());
     }
+
+    /**
+     * This method returns a message that is a reply to "/team" command or a team name menu button
+     * @param chatId
+     * @return
+     */
 
     public BotApiMethod replyToTeam(Long chatId) {
         SendMessage message = new SendMessage().setChatId(chatId);
@@ -139,6 +180,12 @@ public class ResponseProvider {
         return message.setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
     }
 
+    /**
+     * This method is triggered by a "/removeteam" command or a "Remove Team" menu button.
+     * It removes the favourite team entry for the user from the map we store that data in.
+     * @param chatId
+     * @return
+     */
     public BotApiMethod replyToRemoveTeam(Long chatId) {
         favouriteTeams.remove(chatId);
         return new SendMessage().setChatId(chatId)
@@ -146,6 +193,12 @@ public class ResponseProvider {
                             .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
     }
 
+    /**
+     * This method returns a list of commands to choose from,
+     * which is a reply to "/setteam" command or "Set Team" menu button
+     * @param chatId
+     * @return
+     */
     public BotApiMethod replyToSetTeam(Long chatId) {
         List<Team> teams = teamService.getAllTeams();
         if (teams.size() > 0) {
@@ -195,8 +248,14 @@ public class ResponseProvider {
                 .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
     }
 
-    public BotApiMethod setFavouriteTeam(Long chatId, String data) {
-        favouriteTeams.put(chatId, data);
+    /**
+     * This method takes user Id and a team name and persists that data. Then it returns that team's data to the user
+     * @param chatId
+     * @param teamName
+     * @return
+     */
+    public BotApiMethod setFavouriteTeam(Long chatId, String teamName) {
+        favouriteTeams.put(chatId, teamName);
         return replyToTeam(chatId);
     }
     /**
@@ -204,7 +263,6 @@ public class ResponseProvider {
      * @param chatId -key used to search for the team in our map
      * @return team name for the current user or null if it is not found
      */
-
     private String getTeamName(Long chatId){
         return favouriteTeams.getOrDefault(chatId, null);
     }
