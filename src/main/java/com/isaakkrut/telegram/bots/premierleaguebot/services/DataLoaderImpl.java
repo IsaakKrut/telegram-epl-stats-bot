@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 /**
- * This class is an abstraction to the RestService.
+ * This class is an abstraction to RestService.
  * It persists data returned by RestService
  */
 
@@ -23,9 +23,14 @@ public class DataLoaderImpl implements DataLoader {
     private final ScorerService scorerService;
     private final AssistService assistService;
     private final UpdateLogRepository updateLogRepository;
-    private static final int  UPDATES_LIMIT = 50;
+    public static final int  UPDATES_LIMIT = 50;
 
 
+    /**
+     * This method asks RestService for new data in all categories and saves it to corresponding repositories.
+     * It takes chatId to save the user who invoked the update.
+     * @param chatId
+     */
     @Override
     public void loadAll(Long chatId) {
         loadTable(chatId);
@@ -33,18 +38,30 @@ public class DataLoaderImpl implements DataLoader {
         loadAssists(chatId);
     }
 
+    /**
+     * This method asks RestService for new table data and saves it to the corresponding repository.
+     * It takes chatId to save the user who invoked the update.
+     * @param chatId
+     */
+
     @Override
     public void loadTable(Long chatId) {
         updateLogRepository.save(UpdateLog.builder()
                 .userIssuedUpdate(chatId)
                 .updateTime(new Date())
                 .build());
-        System.out.println(updateLogRepository.count() + " - number of updates this month");
+        log.debug(updateLogRepository.count() + " - number of updates this month");
 
         teamService.deleteAll();
             restServiсe.getTeams().ifPresentOrElse(teams-> teamService.saveAll(teams),
                     ()->log.debug("No teams returned from the rest service"));
     }
+
+    /**
+     * This method asks RestService for new scorers data and saves it to the corresponding repository.
+     * It takes chatId to save the user who invoked the update.
+     * @param chatId
+     */
 
     @Override
     public void loadScorers(Long chatId) {
@@ -52,7 +69,7 @@ public class DataLoaderImpl implements DataLoader {
                 .userIssuedUpdate(chatId)
                 .updateTime(new Date())
                 .build());
-        System.out.println(updateLogRepository.count() + " - number of updates this month");
+        log.debug(updateLogRepository.count() + " - number of updates this month");
 
         scorerService.deleteAll();
             restServiсe.getScorers().ifPresentOrElse(scorers -> scorerService.saveAll(scorers),
@@ -60,21 +77,30 @@ public class DataLoaderImpl implements DataLoader {
 
     }
 
-    @Override
-    public int getNumberOfReloadsLeft() {
-        return UPDATES_LIMIT -(int) updateLogRepository.count();
-    }
-
+    /**
+     * This method asks RestService for new assists data and saves it to the corresponding repository.
+     * It takes chatId to save the user who invoked the update.
+     * @param chatId
+     */
     @Override
     public void loadAssists(Long chatId) {
         updateLogRepository.save(UpdateLog.builder()
                 .userIssuedUpdate(chatId)
                 .updateTime(new Date())
                 .build());
-        System.out.println(updateLogRepository.count() + " - number of updates this month");
+        log.debug(updateLogRepository.count() + " - number of updates this month");
 
         assistService.deleteAll();
         restServiсe.getAssists().ifPresentOrElse(assists ->assistService.saveAll(assists),
                 ()->log.debug("No assists returned from the rest service"));
+    }
+
+    /**
+     * this method returns number of reloads left based on the specified limit and number of updates invoked this month.
+     * @return
+     */
+    @Override
+    public int getNumberOfReloadsLeft() {
+        return UPDATES_LIMIT -(int) updateLogRepository.count();
     }
 }
