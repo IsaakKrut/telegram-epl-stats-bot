@@ -5,10 +5,7 @@ import com.isaakkrut.telegram.bots.premierleaguebot.config.KeyboardFactory;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Assist;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Scorer;
 import com.isaakkrut.telegram.bots.premierleaguebot.domain.Team;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.AssistService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.DataLoader;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.ScorerService;
-import com.isaakkrut.telegram.bots.premierleaguebot.services.TeamService;
+import com.isaakkrut.telegram.bots.premierleaguebot.services.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,9 +14,7 @@ import org.telegram.telegrambots.api.methods.BotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,8 +24,9 @@ public class ResponseProvider {
     private final TeamService teamService;
     private final ScorerService scorerService;
     private final AssistService assistService;
+    private final UserService userService;
     private final DataLoader dataLoader;
-    private final Map<Long, String > favouriteTeams = new HashMap<>();
+
     @Value("${telegram.creator-id}")
     private int creatorId;
 
@@ -164,18 +160,16 @@ public class ResponseProvider {
 
     public BotApiMethod<?> replyToTeam(Long chatId) {
         SendMessage message = new SendMessage().setChatId(chatId);
-        if (favouriteTeams.containsKey(chatId)){
-
-            String teamName = favouriteTeams.get(chatId);
+        String teamName = userService.getFavouriteTeamForUser(chatId);
+        if (teamName!= null){
             Team team = teamService.getTeamByName(teamName);
-
-            if (team!= null){
-                message.setText(team.toString());
-            } else{
-                message.setText("Team is not found."); // should not get here as we validate teams before setting them
+            if (team != null){
+                message.setText(team.toString());            //happy path
+            } else {
+                message.setText("Team does not exist");
             }
         } else {
-            message.setText("Team has not been set yet");
+            message.setText("Team is not found");
         }
 
         return message.setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
@@ -188,7 +182,7 @@ public class ResponseProvider {
      * @return success message with menu buttons
      */
     public BotApiMethod<?> replyToRemoveTeam(Long chatId) {
-        favouriteTeams.remove(chatId);
+        userService.removeFavouriteTeamForUser(chatId);
         return new SendMessage().setChatId(chatId)
                             .setText("Favourite Team has been successfully removed")
                             .setReplyMarkup(KeyboardFactory.mainMenu(getTeamName(chatId)));
@@ -256,7 +250,7 @@ public class ResponseProvider {
      * @return success message
      */
     public BotApiMethod<?> setFavouriteTeam(Long chatId, String teamName) {
-        favouriteTeams.put(chatId, teamName);
+        userService.saveFavouriteTeam(chatId, teamName);
         return replyToTeam(chatId);
     }
     /**
@@ -265,7 +259,7 @@ public class ResponseProvider {
      * @return team name for the current user or null if it is not found
      */
     private String getTeamName(Long chatId){
-        return favouriteTeams.getOrDefault(chatId, null);
+        return userService.getFavouriteTeamForUser(chatId);
     }
 
 
